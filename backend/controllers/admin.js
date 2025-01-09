@@ -72,7 +72,7 @@ export const adminSignin = async (req, res) => {
   try {
     const admin = await adminModel.findOne({ username: username });
     if (!admin) {
-      res.status(404).json({message:"Incorrect Credentials" });
+      res.status(404).json({ message: "Incorrect Credentials" });
     } else {
       const passwordMatch = bcrypt.compare(password, admin.password);
       if (passwordMatch) {
@@ -85,10 +85,8 @@ export const adminSignin = async (req, res) => {
         res
           .status(200)
           .json({ messgae: "admin signed in successfully", token });
-      }
-      else
-      {
-        res.status(403).json({message:"Incorrect Credentials"})
+      } else {
+        res.status(403).json({ message: "Incorrect Credentials" });
       }
     }
   } catch (error) {
@@ -131,6 +129,47 @@ export const deletecourse = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-export const addcoursecontent = (req, res) => {
-  res.json({ messgae: "admin addcontent router" });
+export const editcourse = async (req, res) => {
+  const { title, description, price, imageUrl } = req.body;
+  const creatorId = req.adminId;
+  const courseId = req.params.id;
+  console.log(creatorId);
+  console.log(courseId);
+  const parsedBody = createCourseValidation.safeParse(req.body);
+  if (!parsedBody.success) {
+    return res.status(400).json({ message: parsedBody.error });
+  }
+  try {
+    const course = await courseModel.findOne({
+      _id: courseId,
+      creatorId: creatorId,
+    });
+    if (!course) {
+      res.status(404).json({ message: "course not found" });
+    } else {
+      course.title = title;
+      course.description = description;
+      course.price = price;
+      course.imageUrl = imageUrl;
+      await course.save();
+      res.status(200).json({ message: "Course Updated Successfully" });
+    }
+  } catch (error) {
+    res.json({ messgae: error.message });
+  }
+};
+export const getAdminCourses = async (req, res) => {
+  const creatorId = req.adminId;
+  try {
+    const adminCourses = await courseModel.find({
+      creatorId: creatorId,
+    });
+    if (!adminCourses) {
+      res.status(404).json({ message: "No Courses Found" });
+    } else {
+      res.status(200).json({ message: adminCourses });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };

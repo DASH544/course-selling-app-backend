@@ -4,17 +4,18 @@ import jwt from "jsonwebtoken";
 
 export const userAuth = async (req, res, next) => {
   const token = req.headers.authorization;
-  const decodedData = jwt.verify(token,process.env.JWT_USER_SECRET);
-  if(decodedData)
-    {
-        req.userId=decodedData.id
-        next()
+  try {
+    const decodedData = jwt.verify(token, process.env.JWT_USER_SECRET);
+    console.log(decodedData);
+    if (decodedData) {
+      req.userId = decodedData.id;
+      next();
+    } else {
+      res.status(403).json({
+        message: "User Not Authorized",
+      });
     }
-    else
-    {
-        res.status(403).json(
-            {
-                message:"User Not Authorized"
-            })
-    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
