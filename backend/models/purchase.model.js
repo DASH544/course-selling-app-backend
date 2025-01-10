@@ -1,9 +1,5 @@
 import mongoose from "mongoose";
 const purchaseSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-  },
   courseId: {
     type: mongoose.Types.ObjectId,
     ref:"Course",

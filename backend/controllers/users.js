@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import { userModel } from "../models/users.model.js";
+import { courseModel } from "../models/course.model.js";
+import { purchaseModel } from "../models/purchase.model.js";
 const requiredBody = z.object({
   firstname: z.string().min(3).max(32),
   lastname: z.string().min(3).max(32),
@@ -83,7 +85,17 @@ export const userSignin = async (req, res) => {
 };
 
 export const getCoursesPurchased = async (req, res) => {
-  const token=req.userId
+  const userId=req.userId
+  try {
+    const purchases=await purchaseModel.find(
+      {
+        userId:userId
+      })
+    const courses=await courseModel.find({_id:purchases.map((i)=>i.courseId)})
+    res.status(200).json({PurchasedCourses:courses})
+  } catch (error) {
+    
+  }
   if(token)
     {
       res.status(200).json({message:"All courses"})
