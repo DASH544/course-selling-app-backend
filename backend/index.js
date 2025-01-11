@@ -5,9 +5,11 @@ import adminRoutes from './routes/admin.js'
 import dotenv from 'dotenv'
 import coursesRoutes from './routes/courses.js'
 import { connectDB } from './db/db.js';
+import { rateLimiter } from './middlewares/rateLimiter.js'
 dotenv.config()
 connectDB();
 const app=express();
+app.use(rateLimiter)
 app.use(express.json())
 app.use("/users",usersRoutes)
 app.use("/admin",adminRoutes)

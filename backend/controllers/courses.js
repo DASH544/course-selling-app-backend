@@ -1,6 +1,6 @@
 import express from 'express'
-import { courseModel } from '../models/course.model';
-import { purchaseModel } from '../models/purchase.model';
+import { courseModel } from '../models/course.model.js';
+import { purchaseModel } from '../models/purchase.model.js';
 export const getAllCourses = async(req, res) => {
   try {
     const coursesAll=await courseModel.find({})
